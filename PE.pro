@@ -27,7 +27,8 @@ FORMS += \
 
 LIBS += \
     kernel32.lib \
-    Advapi32.lib
+    Advapi32.lib \
+    Shell32.lib
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin

@@ -7,6 +7,7 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <TlHelp32.h>
+#include <ShlObj.h>
 typedef  NTSTATUS (*pAdjustPriv) (ULONG Privilege,
                          BOOLEAN Enable,
                          BOOLEAN CurrentThread,
@@ -34,5 +35,6 @@ private:
     Ui::MainWindow *ui;
     QString selectedFileName;
     DWORD winLogonPid = 0;
+    void AutoElevate();
 };
 #endif // MAINWINDOW_H

